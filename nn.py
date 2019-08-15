@@ -1,12 +1,16 @@
 import h5py
 import random
-from autograd import numpy, grad
-from autograd.scipy.special import logsumexp
-from autograd.misc.flatten import flatten
-from autograd.misc.optimizers import adam
 import os
 import pickle
 
+if __name__ == '__main__':
+    from autograd import numpy, grad
+    from autograd.scipy.special import logsumexp
+    from autograd.misc.flatten import flatten
+    from autograd.misc.optimizers import adam
+else:
+    # No reason to depend on autograd when this is just used as a module
+    import numpy
 
 
 def predict(params, batch_input, dropout=False):

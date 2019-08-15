@@ -10,7 +10,7 @@ class RGB:
         return colors
 
     def dist(self, p, q):
-        return numpy.sum((last_vector - all_embedded)**2, axis=1)
+        return numpy.sum((p - q)**2, axis=1)
 
 
 class Lab:
@@ -18,7 +18,7 @@ class Lab:
         return rgb2lab(colors)
 
     def dist(self, p, q):
-        return numpy.sum((last_vector - all_embedded)**2, axis=1)
+        return numpy.sum((p - q)**2, axis=1)
 
 
 class CIE94:
@@ -47,7 +47,7 @@ class NN:
         return embedded / numpy.sum(embedded**2, axis=1)[:,numpy.newaxis]
 
     def dist(self, p, q):
-        return numpy.sum((last_vector - all_embedded)**2, axis=1)
+        return numpy.sum((p - q)**2, axis=1)
 
 
 if __name__ == '__main__':
@@ -67,8 +67,10 @@ if __name__ == '__main__':
             ('3_ciede2000.png', CIEDE2000()),
             ('4_nn.png', NN())
             ]:
-        all_embedded = obj.embed(all_rgb)
-        colors = [0]  # , len(all_rgb)-1]
+        all_rgb_embedded = obj.embed(all_rgb)
+        colors = [numpy.array(z)/0xff for z in [[0x29, 0x18, 0x42], [0x37, 0xeb, 0xc2], [0x00, 0xc3, 0x97], [0xdf, 0x16, 0x83], [0x42, 0x12, 0x87]]]
+        colors_embedded = obj.embed(numpy.array(colors))
+
         min_dist = numpy.array([float('inf')]*len(all_rgb))
 
         for i in range(16**2):
@@ -76,11 +78,14 @@ if __name__ == '__main__':
                 # Find the next color
                 j = numpy.argmax(min_dist)
                 print(j, numpy.max(min_dist))
-                colors.append(j)
+                colors.append(all_rgb[j])
+                last_vector_embedded = all_rgb_embedded[j]
+            else:
+                last_vector_embedded = colors_embedded[i]
 
             # Update min dist for this color
-            last_vector = all_embedded[colors[i]][numpy.newaxis,:]
-            min_dist = numpy.minimum(min_dist, obj.dist(last_vector, all_embedded))  # numpy.sum((last_vector - all_embedded)**2, axis=1))
+            last_vector_embedded = last_vector_embedded[numpy.newaxis,:]
+            min_dist = numpy.minimum(min_dist, obj.dist(last_vector_embedded, all_rgb_embedded))
 
         d, e = 40, 10
         k = int(numpy.ceil(len(colors)**0.5))
@@ -90,13 +95,13 @@ if __name__ == '__main__':
         def draw_patches(colors, x_offset, y_offset):
             for i, color in enumerate(colors):
                 x, y = i%k, i//k
-                draw.rectangle((x*d+x_offset, y*d+y_offset, (x+1)*d+x_offset, (y+1)*d+y_offset), fill=tuple(int(255*z) for z in all_rgb[color]))
+                draw.rectangle((x*d+x_offset, y*d+y_offset, (x+1)*d+x_offset, (y+1)*d+y_offset), fill=tuple(int(255*z) for z in color))
 
         draw_patches(colors, e, e)
-        colors = sorted(colors, key=lambda j: all_rgb[j][1] - all_rgb[j][0])
+        colors = sorted(colors, key=lambda c: c[1] - c[0])
         for o1 in range(0, len(colors), k):
             o2 = min(o1+k, len(colors))
-            colors[o1:o2] = sorted(colors[o1:o2], key=lambda j: all_rgb[j][2] - all_rgb[j][1])
+            colors[o1:o2] = sorted(colors[o1:o2], key=lambda c: c[2] - c[1])
 
         draw_patches(colors, k*d+2*e, e)
         im.save(fn)

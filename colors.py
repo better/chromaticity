@@ -1,4 +1,4 @@
-from autograd import numpy
+import numpy
 from colormath.color_objects import sRGBColor, LabColor
 from colormath.color_diff import delta_e_cie1994, delta_e_cie2000
 from colormath.color_conversions import convert_color
