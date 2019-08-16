@@ -63,9 +63,9 @@ class Cycler:
         self.m = method()
         self.all_rgb_embedded = self.m.embed(self.all_rgb)
         if seed is None:
-            seed = []
+            seed = numpy.zeros((0, 3))
         if remove_bw:
-            seed = [(0, 0, 0), (1, 1, 1)] + seed
+            seed = numpy.array([(0, 0, 0), (1, 1, 1)] + seed)
         self.seed = seed
         self.seed_embedded = self.m.embed(numpy.array(seed))
         self.remove_bw = remove_bw
@@ -114,7 +114,7 @@ if __name__ == '__main__':
             ('3_ciede2000.png', CIEDE2000),
             ('4_nn.png', NN)
             ]:
-        cycler = Cycler(method=obj)
+        cycler = Cycler(method=obj, remove_bw=False)
         colors = cycler[:2**8]
 
         # Generate Matplotlib colormap format
