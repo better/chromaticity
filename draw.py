@@ -51,7 +51,7 @@ class NN:
 
 
 class Cycler:
-    def __init__(self, method=NN, remove_bw=True, seed=None):
+    def __init__(self, method=NN, remove_bw=True, seed=None, eps=1e-9):
         # Build matrix of 16x16x16 colors
         vs = list(range(0, 256, 17))
         all_rgb = []
@@ -70,31 +70,40 @@ class Cycler:
         self.seed_embedded = self.m.embed(numpy.array(seed))
         self.remove_bw = remove_bw
         self.colors = []
+        self.min_dist = numpy.array([float('inf')]*len(self.all_rgb))
+        self.eps = eps
 
     def __iter__(self):
-        self.min_dist = numpy.array([float('inf')]*len(self.all_rgb))
-        self.i = 0
+        def gen():
+            i = 0
+            while True:
+                yield self[i]
+                i += 1
+        return gen()
+
+    def __getitem__(self, key):
+        if isinstance(key, slice):
+            return [self[i] for i in range(*key.indices(2**99))]
+        assert isinstance(key, int)
         if self.remove_bw:
-            next(self)
-            next(self)
-        return self
+            key += 2
+        while len(self.colors) <= key:
+            if key < len(self.seed_embedded):
+                # Just return the seed
+                color = self.seed[key]
+                last_vector_embedded = self.seed_embedded[i]
+            else:
+                # Find the next color
+                j = numpy.argmax(self.min_dist)
+                color = self.all_rgb[j]
+                last_vector_embedded = self.all_rgb_embedded[j]
 
-    def __next__(self):
-        if len(self.colors) < len(self.seed_embedded):
-            # Just return the seed
-            color = self.seed[self.i]
-            last_vector_embedded = self.seed_embedded[self.i]
-        else:
-            # Find the next color
-            j = numpy.argmax(self.min_dist)
-            color = self.all_rgb[j]
-            last_vector_embedded = self.all_rgb_embedded[j]
-
-        # Update min dist for this color
-        last_vector_embedded = last_vector_embedded[numpy.newaxis,:]
-        self.min_dist = numpy.minimum(self.min_dist, self.m.dist(last_vector_embedded, self.all_rgb_embedded))
-        self.colors.append(color)
-        return color
+            # Update min dist for this color
+            last_vector_embedded = last_vector_embedded[numpy.newaxis,:]
+            self.min_dist = numpy.minimum(self.min_dist, self.m.dist(last_vector_embedded, self.all_rgb_embedded))
+            self.min_dist += self.eps
+            self.colors.append(color)
+        return self.colors[key]
 
 
 if __name__ == '__main__':
@@ -106,9 +115,7 @@ if __name__ == '__main__':
             ('4_nn.png', NN)
             ]:
         cycler = Cycler(method=obj)
-        colors = []
-        for i, color in zip(range(8**2), cycler):
-            colors.append(color)
+        colors = cycler[:2**8]
 
         # Generate Matplotlib colormap format
         print([list(c) + [1] for c in colors])
