@@ -13,11 +13,14 @@ else:
     import numpy
 
 
+PARAMS_PICKLED = os.path.join(os.path.dirname(__file__), 'nn.pickle')
+
+
 def predict(params, batch_input, dropout=False):
     layer = batch_input
     for W, h in params[:-1]:
         layer = numpy.dot(layer, W) + h
-        layer = numpy.maximum(layer, 0.1*layer)  # leaky relu
+        layer = numpy.maximum(layer, 0.03*layer)  # leaky relu
         if dropout:
             layer = dropout * 2 * numpy.random.randint(0, 2, size=layer.shape)
     return layer
@@ -39,9 +42,9 @@ if __name__ == '__main__':
 
     # Generate params
     n_output = max(labels) + 1
-    layers = [3, 64, 64, 32, n_output]
-    if os.path.exists('nn.pickle'):
-        with open('nn.pickle', 'rb') as f:
+    layers = [3, 64, 64, 64, 64, 16, n_output]
+    if os.path.exists(PARAMS_PICKLED):
+        with open(PARAMS_PICKLED, 'rb') as f:
             params = pickle.load(f)
     else:
         params = []
@@ -90,5 +93,5 @@ if __name__ == '__main__':
         last_avg_objective = numpy.exp(sum(terms) / sum(ns))
         if step_size < 1e-7:
             break
-        with open('nn.pickle', 'wb') as f:
+        with open(PARAMS_PICKLED, 'wb') as f:
             pickle.dump(params, f)
