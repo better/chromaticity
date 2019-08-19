@@ -13,7 +13,7 @@ else:
     import numpy
 
 
-PARAMS_PICKLED = os.path.join(os.path.dirname(__file__), 'nn.pickle')
+PARAMS_PICKLED = os.path.join(os.path.dirname(__file__), '..', 'data', 'nn.pickle')
 
 
 def predict(params, batch_input, dropout=False):

@@ -2,8 +2,8 @@ import numpy
 import os
 import pickle
 import PIL.Image, PIL.ImageDraw
-from nn import predict, PARAMS_PICKLED
-from colors import rgb2lab, cie94, ciede2000
+from colors.nn import predict, PARAMS_PICKLED
+from colors.conversion import rgb2lab, cie94, ciede2000
 
 
 class RGB:

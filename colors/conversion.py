@@ -1,7 +1,4 @@
 import numpy
-from colormath.color_objects import sRGBColor, LabColor
-from colormath.color_diff import delta_e_cie1994, delta_e_cie2000
-from colormath.color_conversions import convert_color
 
 
 def lab_f(t):
@@ -24,13 +21,6 @@ def rgb2lab(x):
     return Lab
 
 
-# TODO: make this into a unit test
-expected = numpy.array([[  53.24,  80.09,   67.20],
-                        [  87.73, -86.18,   83.18],
-                        [  32.30,  79.19, -107.86]])
-actual = rgb2lab(numpy.eye(3))
-assert numpy.max(abs(expected - actual)) < 1e-2
-
 def cie94(p, q):
     L_diff = numpy.dot(p - q, numpy.array([1, 0, 0]))
     Cp = numpy.dot(p**2, numpy.array([0, 1, 1]))**0.5
@@ -44,13 +34,6 @@ def cie94(p, q):
     return ((L_diff / (KL*SL))**2 +
             (C_diff / (KC*SC))**2 +
             (H_diff / (KH*SH))**2)**0.5
-
-
-for p in numpy.eye(3):
-    for q in numpy.eye(3):
-        cp = convert_color(sRGBColor(*p), LabColor)
-        cq = convert_color(sRGBColor(*q), LabColor)
-        assert abs(delta_e_cie1994(cp, cq) - cie94(rgb2lab(p), rgb2lab(q))) < 1e-2
 
 
 def ciede2000(p, q):
@@ -91,10 +74,3 @@ def ciede2000(p, q):
             (delta_C_prime / (KC * SC))**2 +
             (delta_H_prime / (KH * SH))**2 +
             RT * delta_C_prime * delta_H_prime / (KC * SC * KH * SH))**0.5
-
-
-for p in numpy.eye(3):
-    for q in numpy.eye(3):
-        cp = convert_color(sRGBColor(*p), LabColor)
-        cq = convert_color(sRGBColor(*q), LabColor)
-        print(p, q, delta_e_cie2000(cp, cq), ciede2000(rgb2lab(p), rgb2lab(q)))
