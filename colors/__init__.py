@@ -1,1 +1,1 @@
-from colors.draw import Cycler, NN, RGB, Lab, CIE94, CIEDE2000
+from colors.palettes import Cycler, NN, RGB, Lab, CIE94, CIEDE2000

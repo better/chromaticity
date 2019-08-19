@@ -1,5 +1,4 @@
 import numpy
-import os
 import pickle
 from colors.nn import predict, PARAMS_PICKLED
 from colors.conversion import rgb2lab, cie94, ciede2000

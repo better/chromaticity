@@ -1,5 +1,7 @@
+import numpy
+import os
 import PIL.Image, PIL.ImageDraw
-from colors.cycler import RGB, Lab, CIE94, CIEDE2000, NN
+from colors.palettes import RGB, Lab, CIE94, CIEDE2000, NN, Cycler
 
 
 DIR = 'pics'
