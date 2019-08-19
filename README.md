@@ -17,7 +17,7 @@ CIE94 color difference formula:
 
 CIEDE2000 color difference formula:
 
-![pic](pics/cie2000.png)
+![pic](pics/ciede2000.png)
 
 Our method (neural network based):
 
