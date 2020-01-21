@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
-setup(name='colors',
-      version='0.0.0',
+setup(name='chromaticity',
+      version='0.0.1',
       description='Generate palettes in different color spaces',
       author='Erik Bernhardsson',
       author_email='erikbern@better.com',

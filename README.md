@@ -1,6 +1,3 @@
-TODO: THIS WILL CHANGE NAME SOON
---------------------------------
-
 This is an experimental package to generate color palettes. We train a neural network to generate a color space that's _perceptually uniform_. Older classic methods do not have this property.
 
 RGB (most simple method)
