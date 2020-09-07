@@ -2,7 +2,7 @@ import numpy
 from colormath.color_objects import sRGBColor, LabColor
 from colormath.color_diff import delta_e_cie1994, delta_e_cie2000
 from colormath.color_conversions import convert_color
-from colors.conversion import rgb2lab, cie94, ciede2000
+from chromaticity.conversion import rgb2lab, cie94, ciede2000
 
 
 def test_rgb2lab():
