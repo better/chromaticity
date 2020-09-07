@@ -3,6 +3,7 @@ from colormath.color_objects import sRGBColor, LabColor
 from colormath.color_diff import delta_e_cie1994, delta_e_cie2000
 from colormath.color_conversions import convert_color
 from chromaticity.conversion import rgb2lab, cie94, ciede2000
+from chromaticity.palettes import Iterator
 
 
 def test_rgb2lab():
@@ -26,4 +27,15 @@ def test_ciede2000():
         for q in numpy.eye(3):
             cp = convert_color(sRGBColor(*p), LabColor)
             cq = convert_color(sRGBColor(*q), LabColor)
-            print(p, q, delta_e_cie2000(cp, cq), ciede2000(rgb2lab(p), rgb2lab(q)))
+            # print(p, q, delta_e_cie2000(cp, cq), ciede2000(rgb2lab(p), rgb2lab(q)))
+            # TODO: what does this actually assert?
+
+
+def test_iterator():
+    it = Iterator()
+    colors = set()
+    for i in range(1000):
+        color = '%02x%02x%02x' % tuple(int(round(z*255)) for z in it[i])
+        assert color not in colors
+        colors.add(color)
+

@@ -49,7 +49,7 @@ class NN:
         return numpy.sum((p - q)**2, axis=1)
 
 
-class Cycler:
+class Iterator:
     def __init__(self, method=NN, remove_bw=True, seed=None, eps=1e-9):
         # Build matrix of 16x16x16 colors
         vs = list(range(0, 256, 17))
@@ -107,3 +107,10 @@ class Cycler:
             self.colors.append(color)
 
         return self.colors[key]
+
+
+Cycler = Iterator  # old class name
+
+class Palette:
+    def __init__(self, n, method=NN):
+        pass
